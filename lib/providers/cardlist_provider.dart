@@ -1,32 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:goodthings/models/goodthing_model.dart';
+import 'package:hive_ce/hive.dart';
 
 class CardlistProvider extends Notifier<List<GoodthingModel>> {
+  final _box = Hive.box<GoodthingModel>("LocalGoodThings");
+
   @override
   List<GoodthingModel> build() {
     // At First the Cards List is empty, In future, it gets its value from the phone's disk
-    return [];
+    return _box.values.toList();
   }
 
   /// This is function that takes in the [GoodthingModel] as a input and store it in the state;
   /// If it already presents in the state, it update the respective card.
   void addGoodThing(GoodthingModel newGoodThing) {
-    bool exists = state.any((card) => card.serialNo == newGoodThing.serialNo);
+    _box.put(newGoodThing.serialNo, newGoodThing);
 
-    // Debug print
-    debugPrint("Card exists? $exists");
-
-    if (exists) {
-      state = [
-        for (final item in state)
-          if (item.serialNo == newGoodThing.serialNo) newGoodThing else item,
-      ];
-    } else {
-      state = [...state, newGoodThing];
-    }
-
-    debugPrint("No of Cards ${state.length}");
+    state = _box.values.toList();
   }
 }
 
