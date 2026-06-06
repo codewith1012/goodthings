@@ -13,7 +13,6 @@ class GoodthingCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
         // Date & Time
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -31,17 +30,22 @@ class GoodthingCard extends StatelessWidget {
 
         // The Card
         GestureDetector(
-          onTap: () { 
-            debugPrint("CardData SerialNo ${cardData.serialNo}");
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>CardScreen(cardData: cardData)));},
+          onTap: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CardScreen(cardData: cardData),
+              ),
+            );
+          },
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadiusGeometry.circular(10),
             ),
-            
+
             child: Row(
               children: [
-          
                 // The Text Content
                 Expanded(
                   flex: 3,
@@ -65,7 +69,7 @@ class GoodthingCard extends StatelessWidget {
                     ),
                   ),
                 ),
-          
+
                 // The Image, For now the icon
                 Expanded(
                   flex: 1,
