@@ -37,6 +37,7 @@ class _AddcardButtonState extends State<AddcardButton> {
         dateTime: DateTime.now(),
         content: "",
         serialNo: DateTime.now().toString(),
+        imagePath: null,
       );
 
       Navigator.pop(context);

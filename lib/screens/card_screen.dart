@@ -1,8 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gal/gal.dart';
 import 'package:goodthings/models/goodthing_model.dart';
-import 'package:goodthings/providers/cardlist_provider.dart';
+import 'package:goodthings/widgets/cardScreen/save_button.dart';
+import 'package:goodthings/widgets/cardScreen/titlechange_alertbox.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class CardScreen extends ConsumerStatefulWidget {
   final GoodthingModel cardData;
@@ -14,14 +21,13 @@ class CardScreen extends ConsumerStatefulWidget {
 }
 
 class _CardScreenState extends ConsumerState<CardScreen> {
-  late GoodthingModel cardData;
   final TextEditingController _contentController = TextEditingController();
+  late GoodthingModel cardData;
 
   @override
   void initState() {
     super.initState();
     cardData = widget.cardData;
-    debugPrint(cardData.serialNo);
     _contentController.text = cardData.content;
   }
 
@@ -52,6 +58,7 @@ class _CardScreenState extends ConsumerState<CardScreen> {
                 dateTime: cardData.dateTime,
                 content: cardData.content,
                 serialNo: cardData.serialNo,
+                imagePath: cardData.imagePath,
               );
             });
           },
@@ -64,7 +71,19 @@ class _CardScreenState extends ConsumerState<CardScreen> {
   Column _buildPage() {
     return Column(
       children: [
-        Container(color: Color(0xFFC9C3CD), height: 100),
+        Container(
+          color: Color(0xFFC9C3CD),
+          height: 100,
+          width: double.infinity,
+          child: Center(
+            child: cardData.imagePath == null
+                ? ElevatedButton(
+                    onPressed: _pickAndSaveImage,
+                    child: Icon(Icons.photo_album_outlined),
+                  )
+                : Image.file(File(cardData.imagePath!), fit: BoxFit.fill),
+          ),
+        ),
 
         // The Texts of the card
         Padding(
@@ -118,35 +137,43 @@ class _CardScreenState extends ConsumerState<CardScreen> {
     );
   }
 
-  // Try clubing the following two funcs into a single FAB class.
-  void _contentValidation()
-  {
-    if(_contentController.text.isEmpty)
-    {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Color(0xFFDAD4DE),
-        content: Text("Don't Leave Your GoodThing Empty :(", style: Theme.of(context).textTheme.bodySmall,)));
-    }
-    else
-    {
-      cardData = GoodthingModel(title: cardData.title, dateTime: cardData.dateTime, content: _contentController.text, serialNo: cardData.serialNo);
+  Future<void> _pickAndSaveImage() async {
+    // Using ImgPicker to pick an img from the gallery.
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedImg = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
 
-      ref.read(cardListProvider.notifier).addGoodThing(cardData);
-      Navigator.pop(context);
-    }
-  }
+    if (pickedImg == null) return;
 
-  FloatingActionButton _buildFAB()
-  {
-    return FloatingActionButton(
-          onPressed: () {
-            _contentValidation();
-          },
-          backgroundColor: Color(0xFFECE6F0),
-          foregroundColor: Colors.black,
-          splashColor: Color(0xFFDAD4DE),
-          child: Icon(Icons.done),
-        );
+    // Open the App Personal Dir to save the img there.
+    final Directory appDocDir = await getApplicationDocumentsDirectory();
+
+    // Each cardData has only one img for it (at least for now), so using serialNo for the file name.
+    final String fileExtension = path.extension(pickedImg.path);
+    final String uniqueFileName =
+        "${cardData.serialNo}_${DateTime.now().millisecondsSinceEpoch}$fileExtension";
+
+    final String permanentPath = path.join(appDocDir.path, uniqueFileName);
+
+    // Deleting the old file
+    if (cardData.imagePath != null) {
+      if (await File(cardData.imagePath!).exists()) {
+        await File(cardData.imagePath!).delete();
+      }
+    }
+
+    await File(pickedImg.path).copy(permanentPath);
+
+    setState(() {
+      cardData = GoodthingModel(
+        title: cardData.title,
+        dateTime: cardData.dateTime,
+        content: cardData.content,
+        serialNo: cardData.serialNo,
+        imagePath: permanentPath,
+      );
+    });
   }
 
   @override
@@ -155,117 +182,12 @@ class _CardScreenState extends ConsumerState<CardScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         // Done Button
-        floatingActionButton: _buildFAB(),
+        floatingActionButton: SaveButton(
+          cardData: cardData,
+          contentController: _contentController,
+        ),
         appBar: _buildAppBar(),
         body: SingleChildScrollView(child: _buildPage()),
-      ),
-    );
-  }
-}
-
-// Title Editor
-class TitleChangeAlertBox extends StatefulWidget {
-  final String currentTitle;
-
-  const TitleChangeAlertBox({super.key, required this.currentTitle});
-
-  @override
-  State<TitleChangeAlertBox> createState() => _TitleChangeAlertBoxState();
-}
-
-class _TitleChangeAlertBoxState extends State<TitleChangeAlertBox> {
-  final TextEditingController _titleController = TextEditingController();
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _titleController.text = widget.currentTitle.trim();
-  }
-
-  void _titleValidationAndSubmission(String title) {
-    if (title.isEmpty) {
-      Navigator.pop(context, widget.currentTitle);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Color(0xFFDAD4DE),
-          content: Text(
-            "Title Cannot be Empty!",
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ),
-      );
-      return;
-    } else {
-      Navigator.pop(context, _titleController.text);
-      _titleController.clear();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Color(0xFFECE6F0),
-      elevation: 10,
-      shadowColor: Colors.black,
-
-      // Title
-      title: Text(
-        "What's your new title?",
-        style: TextStyle(
-          fontFamily: "Junge",
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-
-      // Contents
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Divider(height: 0, thickness: 1, color: Colors.black),
-          SizedBox(height: 8),
-          TextField(
-            controller: _titleController,
-            maxLength: 50,
-            maxLines: null,
-            cursorColor: Colors.black,
-            autofocus: true,
-            style: Theme.of(context).textTheme.titleMedium,
-            decoration: InputDecoration(
-              hint: Text(
-                "Once Again, Be Brief though :D",
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-
-              // Removing the Borders
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-            ),
-
-            onSubmitted: (value) => _titleValidationAndSubmission(value),
-          ),
-
-          TextButton(
-            style: ButtonStyle(
-              overlayColor: WidgetStatePropertyAll(Color(0xFFDAD4DE)),
-            ),
-            onPressed: () =>
-                _titleValidationAndSubmission(_titleController.text),
-            child: Text(
-              "Done!!",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-        ],
       ),
     );
   }

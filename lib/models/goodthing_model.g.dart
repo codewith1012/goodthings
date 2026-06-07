@@ -21,13 +21,14 @@ class GoodthingModelAdapter extends TypeAdapter<GoodthingModel> {
       dateTime: fields[2] as DateTime,
       content: fields[3] as String,
       serialNo: fields[0] as String,
+      imagePath: fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, GoodthingModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.serialNo)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class GoodthingModelAdapter extends TypeAdapter<GoodthingModel> {
       ..writeByte(2)
       ..write(obj.dateTime)
       ..writeByte(3)
-      ..write(obj.content);
+      ..write(obj.content)
+      ..writeByte(4)
+      ..write(obj.imagePath);
   }
 
   @override

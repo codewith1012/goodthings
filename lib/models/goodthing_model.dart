@@ -17,10 +17,14 @@ class GoodthingModel {
   @HiveField(3)
   final String content;
 
+  @HiveField(4)
+  final String? imagePath;
+
   GoodthingModel({
     required this.title,
     required this.dateTime,
     required this.content,
     required this.serialNo,
+    required this.imagePath,
   });
 }
