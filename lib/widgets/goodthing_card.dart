@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:goodthings/models/goodthing_model.dart';
 import 'package:goodthings/screens/card_screen.dart';
@@ -44,42 +46,58 @@ class GoodthingCard extends StatelessWidget {
               borderRadius: BorderRadiusGeometry.circular(10),
             ),
 
-            child: Row(
-              children: [
-                // The Text Content
-                Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          cardData.title,
-                          style: Theme.of(context).textTheme.titleMedium,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: 80, maxHeight: 100),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // The Text Content
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              cardData.title,
+                              style: Theme.of(context).textTheme.titleMedium,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 8),
+                            Expanded(
+                              child: Text(
+                                cardData.content,
+                                style: Theme.of(context).textTheme.bodySmall,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          cardData.content,
-                          style: Theme.of(context).textTheme.bodySmall,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
 
-                // The Image, For now the icon
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    color: Color(0xFFC9C3CD),
-                    height: 75,
-                    child: Icon(Icons.emoji_emotions),
-                  ),
+                    // The Image, For now the icon
+                    if (cardData.imagePath != null)
+                      Expanded(
+                        flex: 1,
+                        child: ClipRRect(
+                          borderRadius: BorderRadiusGeometry.only(
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                          ),
+                          child: Image.file(
+                            File(cardData.imagePath!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

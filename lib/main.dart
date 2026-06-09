@@ -42,7 +42,19 @@ class GoodThings extends StatelessWidget {
       routes: {'homeScreen': (context) => const HomeScreen()},
       initialRoute: 'homeScreen',
       theme: ThemeData(
-        buttonTheme: ButtonThemeData(splashColor: Color(0xFFDAD4DE)),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style:
+              ElevatedButton.styleFrom(
+                splashFactory: InkRipple.splashFactory,
+              ).copyWith(
+                overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return const Color(0xFFDAD4DE);
+                  }
+                  return null;
+                }),
+              ),
+        ),
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Color(0xFFC9C3CD),
           selectionHandleColor: Color(0xFFC9C3CD),
