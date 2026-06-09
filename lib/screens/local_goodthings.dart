@@ -31,10 +31,11 @@ class LocalGoodthings extends ConsumerWidget {
               ),
             )
           : ListView.builder(
+              reverse: true,
               itemCount: goodThings.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   child: GoodthingCard(cardData: goodThings[index]),
                 );
               },

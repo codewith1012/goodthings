@@ -46,57 +46,55 @@ class GoodthingCard extends StatelessWidget {
               borderRadius: BorderRadiusGeometry.circular(10),
             ),
 
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: 80, maxHeight: 100),
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // The Text Content
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              cardData.title,
-                              style: Theme.of(context).textTheme.titleMedium,
-                              maxLines: 1,
+            child: SizedBox(
+              height: 100,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // The Text Content
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            cardData.title,
+                            style: Theme.of(context).textTheme.titleMedium,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 8),
+                          Expanded(
+                            child: Text(
+                              cardData.content,
+                              style: Theme.of(context).textTheme.bodySmall,
                               overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                             ),
-                            SizedBox(height: 8),
-                            Expanded(
-                              child: Text(
-                                cardData.content,
-                                style: Theme.of(context).textTheme.bodySmall,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                            ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // The Image, For now the icon
+                  if (cardData.imagePath != null)
+                    Expanded(
+                      flex: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadiusGeometry.only(
+                          topRight: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                        child: Image.file(
+                          File(cardData.imagePath!),
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
-
-                    // The Image, For now the icon
-                    if (cardData.imagePath != null)
-                      Expanded(
-                        flex: 1,
-                        child: ClipRRect(
-                          borderRadius: BorderRadiusGeometry.only(
-                            topRight: Radius.circular(10),
-                            bottomRight: Radius.circular(10),
-                          ),
-                          child: Image.file(
-                            File(cardData.imagePath!),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                ],
               ),
             ),
           ),
