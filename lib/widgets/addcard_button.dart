@@ -87,7 +87,7 @@ class _AddcardButtonState extends State<AddcardButton> {
                     style: Theme.of(context).textTheme.titleMedium,
                     decoration: InputDecoration(
                       hint: Text(
-                        "Be Brief for the title though ;D",
+                        "A Brief Title ;D",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
 

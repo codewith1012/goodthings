@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:goodthings/providers/pageIndex_provider.dart';
+import 'package:goodthings/providers/pageindex_provider.dart';
 import 'package:goodthings/screens/community_goodthings.dart';
 import 'package:goodthings/screens/local_goodthings.dart';
 import 'package:goodthings/widgets/addcard_button.dart';
