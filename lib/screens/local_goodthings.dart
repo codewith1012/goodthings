@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:goodthings/models/goodthing_model.dart';
 import 'package:goodthings/providers/cardlist_provider.dart';
 import 'package:goodthings/widgets/goodthing_card.dart';
-import 'package:hive_ce/hive.dart';
 
 class LocalGoodthings extends ConsumerWidget {
   const LocalGoodthings({super.key});
