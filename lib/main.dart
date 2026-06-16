@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:goodthings/hive_registrar.g.dart';
 import 'package:goodthings/models/goodthing_model.dart';
@@ -22,12 +23,18 @@ Future<void> clearDB() async {
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   // await clearDB();
   await Hive.initFlutter();
 
   Hive.registerAdapters();
   await Hive.openBox<GoodthingModel>("LocalGoodThings");
+
+  // Keep the splash screen visible for 2 seconds
+  await Future.delayed(const Duration(milliseconds: 900));
+  FlutterNativeSplash.remove();
 
   runApp(ProviderScope(child: const GoodThings()));
 }
