@@ -1,19 +1,21 @@
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:goodthings/models/onboardscreen_model.dart';
+import 'package:goodthings/providers/sharedprefs_provider.dart';
 import 'package:goodthings/services/auth_service.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   final String name;
 
   const OnboardingScreen({super.key, required this.name});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   final AuthService authService = AuthService();
@@ -266,6 +268,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         onPressed: () async {
           await authService.signInWithGoogle(userName: widget.name);
+          await ref.read(localPrefsProvider).setOnBoardingCompleted();
           if (mounted) {
             Navigator.of(context).popUntil((route) => route.isFirst);
           }

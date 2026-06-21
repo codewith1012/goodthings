@@ -1,17 +1,23 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:goodthings/providers/sharedprefs_provider.dart';
 import 'package:goodthings/screens/onboarding_screen.dart';
+import 'package:goodthings/services/auth_service.dart';
+import 'package:goodthings/utils/popup_toast.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+
+  final _authService = AuthService();
 
   @override
   void dispose() {
@@ -150,9 +156,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           GestureDetector(
-            onTap: () {
-              // Route to Sign In
-              Navigator.pushNamed(context, 'signInScreen');
+            onTap: () async {
+              bool isNew = await _authService.isNewUser();
+              if (isNew) {
+                if (mounted) {
+                  showToast(context: context, message: "Sign Up Mate!!");
+                }
+                await _authService.deleteCurrentUser();
+              } else {
+                ref.read(localPrefsProvider).setOnBoardingCompleted();
+              }
             },
             child: const Padding(
               padding: EdgeInsets.symmetric(vertical: 4.0),
@@ -161,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Judson',
-                  fontSize: 16,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(206, 255, 153, 0),
                 ),
@@ -217,7 +230,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Name Field
-                _buildFieldLabel('Full Name'),
+                _buildFieldLabel('Nick Name'),
                 const SizedBox(height: 8),
                 _buildNameField(),
                 const SizedBox(height: 20),
