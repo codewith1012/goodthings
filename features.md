@@ -13,6 +13,7 @@
 
 1. ToolTip at the top
 2. Daily Streak of Good Things
+3. Log-in as Guest.
 4. Content Formatting in the CardScreen, Inline Commands like:
     #Heading, etc.
 
@@ -20,3 +21,8 @@
 
 1. Reversing the list of goodthings at the provider.
 2. Rive Integration for enhancing UI/UX.
+
+
+## Before Launching
+
+1. Change the app_package_name and its ID and ReConfigure the FireBase Backend Container.

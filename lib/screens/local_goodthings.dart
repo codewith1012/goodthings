@@ -7,6 +7,26 @@ import 'package:goodthings/widgets/goodthing_card.dart';
 class LocalGoodthings extends ConsumerWidget {
   const LocalGoodthings({super.key});
 
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<GoodthingModel> goodThings = ref.watch(cardListProvider);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            _buildTitle(context),
+            // The Horizontal Line
+            Divider(height: 40, thickness: 1, color: Colors.black),
+            _buildGoodThings(context, goodThings, ref),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<bool?> _actionOnGoodThing(
     BuildContext context,
     DismissDirection dir,
@@ -105,26 +125,6 @@ class LocalGoodthings extends ConsumerWidget {
                 );
               },
             ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<GoodthingModel> goodThings = ref.watch(cardListProvider);
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            _buildTitle(context),
-            // The Horizontal Line
-            Divider(height: 40, thickness: 1, color: Colors.black),
-            _buildGoodThings(context, goodThings, ref),
-          ],
-        ),
-      ),
     );
   }
 }
