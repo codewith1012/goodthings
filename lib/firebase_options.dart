@@ -47,7 +47,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAEujIg85IqEc5v-WGXTO87-E1C2lqfF7o',
+    apiKey: 'AIzaSyAPD4UjfXHYWAHTmUIBJeUUPQBzqQnHzSQ',
     appId: '1:921119528673:web:3ae15b0fae64d698fc09a0',
     messagingSenderId: '921119528673',
     projectId: 'goodthings-53650',
@@ -57,19 +57,20 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDaIeNnJAykRW_1SAc58qt2es9tS_tClSM',
+    apiKey: 'AIzaSyCiuHbev8RZLgHOAMLTlO3zIl8NoAKtlnc',
     appId: '1:921119528673:android:ab148cc686e0bc65fc09a0',
     messagingSenderId: '921119528673',
     projectId: 'goodthings-53650',
     storageBucket: 'goodthings-53650.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAroX7SsuYsiXj4vgMJqqdKmM__coCR2p4',
+    apiKey: 'AIzaSyC7HBlI0XqNiFqiupXojquxQ-FTwtrjYaI',
     appId: '1:921119528673:ios:8039ae37dcb5a7e7fc09a0',
     messagingSenderId: '921119528673',
     projectId: 'goodthings-53650',
     storageBucket: 'goodthings-53650.firebasestorage.app',
+    androidClientId: '921119528673-4sndsnqace0q2sl52pfrlqi3sdsuka4l.apps.googleusercontent.com',
+    iosClientId: '921119528673-ckts0ro8vlegqurpgv4tsavbc8iuq386.apps.googleusercontent.com',
     iosBundleId: 'com.example.goodthings',
   );
 }
