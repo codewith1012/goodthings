@@ -28,18 +28,11 @@ void showToast({required BuildContext context, required String message}) {
             children: [
               Image.asset(
                 'assets/logo/app_logo_foreground.png', // Swap with your actual app icon path
-                width: 24,
-                height: 24,
+                width: 30,
+                height: 30,
               ),
-              const SizedBox(width: 8),
-              Text(
-                message,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              const SizedBox(width: 3),
+              Text(message, style: Theme.of(context).textTheme.bodySmall),
             ],
           ),
         ),

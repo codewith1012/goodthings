@@ -14,6 +14,7 @@ import 'package:goodthings/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:goodthings/screens/sign_up_screen.dart';
 import 'package:goodthings/services/local_prefs_service.dart';
+import 'package:goodthings/theme/app_theme.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
@@ -82,34 +83,7 @@ class GoodThings extends ConsumerWidget {
         'signUpScreen': (context) => const SignUpScreen(),
       },
       initialRoute: '/',
-      theme: ThemeData(
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style:
-              ElevatedButton.styleFrom(
-                splashFactory: InkRipple.splashFactory,
-              ).copyWith(
-                overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return const Color(0xFFDAD4DE);
-                  }
-                  return null;
-                }),
-              ),
-        ),
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Color(0xFFC9C3CD),
-          selectionHandleColor: Color(0xFFC9C3CD),
-          selectionColor: Color(0xFFC9C3CD),
-        ),
-        textTheme: TextTheme(
-          displayLarge: TextStyle(fontFamily: "Junge", fontSize: 60),
-          displayMedium: TextStyle(fontFamily: "Junge", fontSize: 33),
-          titleMedium: TextStyle(fontFamily: "Judson", fontSize: 20),
-          bodySmall: TextStyle(fontFamily: "Judson", fontSize: 16),
-          titleLarge: TextStyle(fontFamily: "Judson", fontSize: 25),
-          titleSmall: TextStyle(fontFamily: "Judson", fontSize: 18),
-        ),
-      ),
+      theme: AppTheme.lightTheme,
     );
   }
 }

@@ -10,6 +10,7 @@ class HomeScreen extends ConsumerWidget {
 
   BottomAppBar _buildbottombar(BuildContext context, WidgetRef ref) {
     return BottomAppBar(
+      color: Theme.of(context).colorScheme.primary,
       shape: CircularNotchedRectangle(),
       height: 45,
       padding: const EdgeInsets.symmetric(horizontal: 55),
@@ -42,6 +43,8 @@ class HomeScreen extends ConsumerWidget {
     int pageindex = ref.watch(pageIndexProvider);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+
       // New card adding button (FAB)
       floatingActionButton: pageindex == 0 ? AddcardButton() : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
