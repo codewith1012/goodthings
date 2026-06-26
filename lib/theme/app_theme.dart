@@ -18,6 +18,7 @@ class AppTheme {
       // Injecting your palette into Material 3's ColorScheme
       colorScheme: const ColorScheme.light(
         primary: primaryColor,
+        primaryContainer: Color.fromARGB(255, 246, 145, 169),
         secondary: secondaryColor,
         tertiary: tertiaryColor,
         surface: backgroundColor,

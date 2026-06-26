@@ -1,14 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:goodthings/models/goodthing_model.dart';
 import 'package:goodthings/providers/cardlist_provider.dart';
+import 'package:goodthings/providers/user_provider.dart';
+import 'package:goodthings/screens/profile_screen.dart';
 import 'package:goodthings/widgets/goodthing_card.dart';
 
-const _primary = Color(0xFF894C5C);
 const _tertiaryContainer = Color(0xFFFFAA4E);
 const _onTertiaryContainer = Color(0xFF704000);
 const _primaryFixed = Color(0xFFFFD9E0);
-const _primaryContainer = Color(0xFFF4A7B9);
 const _onSurfaceVariant = Color(0xFF524346);
 
 class LocalGoodthings extends ConsumerWidget {
@@ -17,49 +19,12 @@ class LocalGoodthings extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<GoodthingModel> goodThings = ref.watch(cardListProvider);
+    final User? user = ref.watch(userProvider);
 
     return Stack(
       children: [
         _buildBackGroundEffects(),
-        // ── Main scrollable content ──────────────────────────────────────────
-        Positioned.fill(
-          child: SafeArea(
-            bottom: false,
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                // Sticky top app bar
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _StickyHeaderDelegate(
-                    minHeight: 76,
-                    maxHeight: 76,
-                    child: _buildTopBar(),
-                  ),
-                ),
-
-                // Cards feed
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 140),
-                  sliver: goodThings.isEmpty
-                      ? SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: _buildEmptyState(),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) => Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: GoodthingCard(cardData: goodThings[index]),
-                            ),
-                            childCount: goodThings.length,
-                          ),
-                        ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        _buildContent(context, user, goodThings),
       ],
     );
   }
@@ -78,47 +43,125 @@ class LocalGoodthings extends ConsumerWidget {
     );
   }
 
-  // ── Header ─────────────────────────────────────────────────────────────────
-  static Widget _buildTopBar() {
+  Positioned _buildContent(
+    BuildContext context,
+    User? user,
+    List<GoodthingModel> goodThings,
+  ) {
+    return Positioned.fill(
+      child: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _StickyHeaderDelegate(
+                minHeight: 76,
+                maxHeight: 76,
+                child: _buildTopBar(context, user!),
+              ),
+            ),
+
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 140),
+              sliver: goodThings.isEmpty
+                  ? SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _buildEmptyState(),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => Padding(
+                          padding: const EdgeInsets.only(bottom: 18),
+                          child: GoodthingCard(cardData: goodThings[index]),
+                        ),
+                        childCount: goodThings.length,
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: _primaryFixed,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.auto_awesome_rounded,
+              size: 34,
+              color: Color(0xFF894C5C),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Waiting for your first\nGood Thing!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Judson',
+              fontSize: 20,
+              color: Color(0xFF894C5C),
+              fontWeight: FontWeight.w600,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Tap the + button to capture\nsomething that made you smile.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Judson',
+              fontSize: 14,
+              color: _onSurfaceVariant,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopBar(BuildContext context, User user) {
+    String greetingMessage = _decideGreetingMessage();
+
     return Container(
       color: const Color(0xFFFFF8F7).withValues(alpha: 0.95),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Left: title + subtitle
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: [
-                const Text(
-                  'Your Spark of Joy',
+                Text(
+                  '$greetingMessage ${user.displayName}',
                   style: TextStyle(
                     fontFamily: 'Judson',
-                    fontSize: 26,
+                    fontSize: 24,
                     fontWeight: FontWeight.w700,
-                    color: _primary,
+                    color: Theme.of(context).colorScheme.primaryContainer,
                     letterSpacing: -0.3,
                     height: 1.15,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Good things you\'ve noticed ✨',
-                  style: TextStyle(
-                    fontFamily: 'Judson',
-                    fontSize: 13,
-                    color: _onSurfaceVariant,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
             ),
           ),
 
-          // Right: streak badge beside avatar in a Row
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -154,19 +197,7 @@ class LocalGoodthings extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              // Avatar
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: _primaryFixed,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: _primaryContainer, width: 2),
-                ),
-                child: const ClipOval(
-                  child: Icon(Icons.person_rounded, color: _primary, size: 22),
-                ),
-              ),
+              _buildAvatar(context, user),
             ],
           ),
         ],
@@ -174,55 +205,51 @@ class LocalGoodthings extends ConsumerWidget {
     );
   }
 
-  // ── Empty state ─────────────────────────────────────────────────────────────
-  static Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: _primaryFixed,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.auto_awesome_rounded,
-              size: 34,
-              color: _primary,
-            ),
+  String _decideGreetingMessage() {
+    int hour = DateTime.now().hour;
+
+    if (hour >= 4 && hour < 12) {
+      return "Good Morning";
+    } else if (hour >= 12 && hour < 16) {
+      return "Good AfterNoon";
+    } else if (hour >= 16 && hour < 21) {
+      return "Good Evening";
+    }
+
+    return "Have a Sleep,";
+  }
+
+  GestureDetector _buildAvatar(BuildContext context, User user) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => ProfileScreen()));
+      },
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: _primaryFixed,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary,
+            width: 2,
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Waiting for your first\nGood Thing!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Judson',
-              fontSize: 20,
-              color: _primary,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
-            ),
+        ),
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: user.photoURL!,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => const CircularProgressIndicator(),
+            errorWidget: (context, url, error) => const Icon(Icons.person),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Tap the + button to capture\nsomething that made you smile.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Judson',
-              fontSize: 14,
-              color: _onSurfaceVariant,
-              height: 1.5,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-// ── Sliver persistent header helper ────────────────────────────────────────────
 class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final double minHeight;

@@ -60,8 +60,8 @@ class GoodthingCard extends StatelessWidget {
           _formatDateTime(cardData.dateTime),
           style: const TextStyle(
             fontFamily: 'Judson',
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
             letterSpacing: 1.1,
             color: Color(0xFF4B4445),
           ),
@@ -99,7 +99,7 @@ class GoodthingCard extends StatelessWidget {
         fontFamily: 'Junge',
         fontSize: 22,
         fontWeight: FontWeight.w600,
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.primaryContainer,
         height: 1.25,
       ),
     );

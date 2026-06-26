@@ -21,6 +21,7 @@
 2. Daily Streak of Good Things
 3. Log-in as Guest.
 4. Manage the Friends List.
+5. Stack Like Widget for same day Good Things; Build this stack-like widget in the screen instead of a GoodThing card if there are mul good things in the same day.
 
 
 ## Optimisation Needed

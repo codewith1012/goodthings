@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:goodthings/providers/authstate_provider.dart';
 import 'package:goodthings/providers/sharedprefs_provider.dart';
 import 'package:goodthings/screens/home_screen.dart';
 import 'package:goodthings/screens/sign_up_screen.dart';
-import 'package:goodthings/services/auth_service.dart';
 import 'package:toastification/toastification.dart';
 
 class Authgate extends ConsumerWidget {
